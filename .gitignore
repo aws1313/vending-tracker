@@ -9,7 +9,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+.idea/
 # Distribution / packaging
 .Python
 build/
@@ -549,7 +549,8 @@ Temporary Items
 
 vt_web/.data
 vt_device/.data
-
+vt_web/.idea
+vt_device/.idea
 # add your custom gitignore here:
 !.gitignore
 !.gitsubmodules
