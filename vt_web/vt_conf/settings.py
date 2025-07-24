@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,18 +14,36 @@ SECRET_KEY = 'django-insecure-7h4a7r6^x&$1m=$i#2pfq-6#iv_xtcizptek5^_n7ep(8$w&5p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+IS_DOCKER = False
+
+DEFAULT_DATA_DIR = "/data" if IS_DOCKER else "./.data"
+
+DATA_DIR = os.getenv("DATA_DIR", DEFAULT_DATA_DIR)
+
+os.makedirs(DATA_DIR, exist_ok=True)
+
 ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # auth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.openid_connect',
+
+    # vt
+    'vt_products',
 ]
 
 MIDDLEWARE = [
@@ -35,6 +54,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # allauth
+    'allauth.account.middleware.AccountMiddleware',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 ROOT_URLCONF = 'vt_conf.urls'
@@ -49,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
             ],
         },
     },
@@ -63,7 +91,7 @@ WSGI_APPLICATION = 'vt_conf.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(DATA_DIR, 'db.sqlite3'),
     }
 }
 
@@ -103,6 +131,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(DATA_DIR, 'static')
+os.makedirs(STATIC_ROOT, exist_ok=True)
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
+os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

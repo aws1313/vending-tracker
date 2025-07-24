@@ -1,1 +1,7 @@
 django
+django-configurations
+gunicorn
+pillow
+django-allauth[socialaccount,openid_connect]
+requests
+jwt
