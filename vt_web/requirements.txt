@@ -5,3 +5,4 @@ pillow
 django-allauth[socialaccount,openid_connect]
 requests
 jwt
+django-bootstrap5
