@@ -1,0 +1,16 @@
+<ul>
+   {% for m in object_list %}
+        <li>
+            <a href="/dashboard/machines/{{ m.pk }}">{{ m.friendly_name }}</a>
+        </li>
+    {% empty %}
+        <li>keine Automaten</li>
+    {% endfor %}
+</ul>
+
+<form action="/dashboard/machines/add" method="post">
+    {% csrf_token %}
+    <label for="friendly_name">Machine</label>
+    <input id="friendly_name" type="text" name="friendly_name">
+    <input type="submit" value="OK">
+</form>

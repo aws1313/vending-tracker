@@ -1,6 +1,8 @@
 from pathlib import Path
 import os
 
+from django.contrib import messages
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
 
     # vt
     'vt_products',
+    'vt_public_web'
 ]
 
 MIDDLEWARE = [
@@ -137,6 +140,10 @@ STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(DATA_DIR, 'static')
 os.makedirs(STATIC_ROOT, exist_ok=True)
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static")
+]
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
 os.makedirs(MEDIA_ROOT, exist_ok=True)
@@ -145,3 +152,9 @@ os.makedirs(MEDIA_ROOT, exist_ok=True)
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# BOOTSTRAP 5
+BOOTSTRAP5 = {
+    "javascript_url": "/static/bootstrap.bundle.min.js",
+    "css_url": "/static/bootstrap.min.css",
+}

@@ -1,0 +1,25 @@
+<h1>{{ machine.friendly_name }}</h1>
+<h4>Fächer</h4>
+<form action="/dashboard/machines/{{ machine.pk }}/add_row" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Reihe hinzufügen">
+</form>
+<br>
+<ul>
+    {% for r in machine.machinerow_set.all %}
+        <li>
+            {% for f in r.machinefield_set.all %}
+                <h5>hi</h5>
+            {% empty %}
+                <p>Keine Felder!</p>
+            {% endfor %}
+            <form action="/dashboard/machines/{{ machine.pk }}/{{ r.pk }}/add_field" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Feld hinzugügen">
+            </form>
+        </li>
+
+    {% empty %}
+        <li>Keine Reihen, bitte Hinzufügen!</li>
+    {% endfor %}
+</ul>
