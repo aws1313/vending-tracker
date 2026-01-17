@@ -5,10 +5,11 @@ on:
     branches:
       - main
     paths:
-      - 'Dockerfile'
-      - 'docker-compose.yml'
+      - './vt_web/Dockerfile'
+      - './vt_web/docker-compose.yml'
       - '**/*.py'
-      - 'requirements.txt'
+      - '**/*.html'
+      - './vt_web/requirements.txt'
       - '.github/workflows/docker-build-and-push.yml' # Pfad korrigiert
 
 jobs:
