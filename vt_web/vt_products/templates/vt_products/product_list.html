@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 {% load django_bootstrap5 %}
 
-{%  block content %}
+{% block content %}
+   <div>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "add_product" %}">
         Produkt hinzufügen
     </button>
     <div class="modal fade" id="editForm" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="post" id="modalForm">
+                <form method="post" id="modalForm" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="modal-header">
                        <h5 class="modal-title">Produkt hinzufügen</h5>
@@ -25,16 +26,34 @@
             </div>
         </div>
     </div>
-    {% for p in object_list %}
-        {{ p.name }}
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "update_product" p.pk %}">
-         Produkt updaten
-         </button>
-        <br>
-    {% empty %}
 
-    {% endfor %}
+   <div class="album py-4">
+       <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3">
+           {% for p in object_list %}
+               <div class="col-12 align-items-stretch">
+                <div class="card shadow-sm pp-card">
+                    <img src="{% if p.preview_image %}{{ p.preview_image.url }}{% else %}{% endif %}" class="card-img-top" style="width:auto; max-height:30vh" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ p.name }}</h5>
+                        <p class="card-text">
+                            Verkauft für: {{ p.vend_price }} €
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "update_product" p.pk %}">
+                            Produkt updaten
+                        </button>
+                    </div>
 
+                </div>
+               </div>
+           {% empty %}
+
+           {% endfor %}
+       </div>
+   </div>
+
+   </div>
     <script>
         $(document).ready(function() {
             // When the modal is about to be shown...

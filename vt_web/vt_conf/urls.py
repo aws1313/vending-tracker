@@ -20,6 +20,8 @@ from django.contrib import admin
 from allauth.account.decorators import secure_admin_login
 from django.urls import path, include
 from vt_conf import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 admin.autodiscover()
 admin.site.login = secure_admin_login(admin.site.login)
@@ -28,5 +30,8 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path("", include("vt_public_web.urls")),
 
+    path("api/", include("vt_api.urls")),
+
     path("dashboard/", include("vt_products.urls"))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

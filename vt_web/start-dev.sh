@@ -1,5 +1,5 @@
 #!/bin/bash
-export DEBUG=True
+# export DEBUG=True
 # Apply database migrations
 echo "Applying database migrations..."
 python manage.py migrate

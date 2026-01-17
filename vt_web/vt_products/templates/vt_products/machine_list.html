@@ -1,3 +1,7 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
 <ul>
    {% for m in object_list %}
         <li>
@@ -14,3 +18,5 @@
     <input id="friendly_name" type="text" name="friendly_name">
     <input type="submit" value="OK">
 </form>
+
+{% endblock %}

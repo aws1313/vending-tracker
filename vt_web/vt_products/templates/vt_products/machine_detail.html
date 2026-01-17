@@ -1,25 +1,103 @@
-<h1>{{ machine.friendly_name }}</h1>
-<h4>Fächer</h4>
-<form action="/dashboard/machines/{{ machine.pk }}/add_row" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Reihe hinzufügen">
-</form>
-<br>
-<ul>
-    {% for r in machine.machinerow_set.all %}
-        <li>
-            {% for f in r.machinefield_set.all %}
-                <h5>hi</h5>
-            {% empty %}
-                <p>Keine Felder!</p>
-            {% endfor %}
-            <form action="/dashboard/machines/{{ machine.pk }}/{{ r.pk }}/add_field" method="post">
-                {% csrf_token %}
-                <input type="submit" value="Feld hinzugügen">
-            </form>
-        </li>
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+{% load mathfilters %}
+{% block content %}
 
-    {% empty %}
-        <li>Keine Reihen, bitte Hinzufügen!</li>
-    {% endfor %}
-</ul>
+<h1>{{ machine.friendly_name }}</h1>
+    <div class="row row-cols-1 row-cols-xl-2">
+        <div class="col">
+            <table class="table table-bordered">
+                {% for r in machine.machinerow_set.all %}
+                    <tr>
+                        <td>
+                            <form action="/dashboard/machines/{{ machine.pk }}/{{ r.pk }}/add_field" method="post">
+                                {% csrf_token %}
+                                <input type="submit" value="+">
+                            </form>
+                        </td>
+                        {% for f in r.machinefield_set.all %}
+
+                            <td style="background: linear-gradient(to top, {{ f.status_color }} {{ f.status_percent_in_stock }}%, rgba(0,0,0,0) {{ f.status_percent_in_stock }}%)">
+                                {% if f.product %}
+                                    {% with percentage_left=f.in_stock|div:f.max_capacity %}
+
+                                        {{ f.product.name }}
+                                        {{ f.percent_in_stock }}
+                                    {% endwith %}
+                                {% else %}
+                                    kp
+                                {% endif %}
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url = "{% url 'update_machine_field' f.pk %}">
+                                    bearbeiten
+                                </button>
+
+                            </td>
+                        {% empty %}
+
+                        {% endfor %}
+                    </tr>
+
+                {% empty %}
+                    <li>Keine Reihen, bitte Hinzufügen!</li>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col">
+            <form action="/dashboard/machines/{{ machine.pk }}/renew_api" method="post">
+                {% csrf_token %}
+            <input type="submit" class="btn btn-primary" value="API-Key erneuern">
+            </form>
+                <h4>Fächer</h4>
+            <form action="/dashboard/machines/{{ machine.pk }}/add_row" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Reihe hinzufügen">
+            </form>
+            <br>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="editForm" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" id="modalForm">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                       <h5 class="modal-title">Feld bearbeiten</h5>
+                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Save Changes">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<script>
+    $(document).ready(function() {
+        // When the modal is about to be shown...
+        $('#editForm').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var url = button.data('url'); // Extract URL from data-* attribute
+
+            var modal = $(this);
+            var modalBody = modal.find('.modal-body');
+
+            var form = modal.find('#modalForm');
+            if (form.length) {
+                form.attr('action', url);
+            }
+
+            // Load the content from the Django view into the modal body
+            modalBody.html('<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+            modalBody.load(url);
+        });
+    });
+</script>
+{% endblock %}

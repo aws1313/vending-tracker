@@ -3,6 +3,8 @@ import os
 
 from django.contrib import messages
 
+from decouple import config, Csv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -10,13 +12,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7h4a7r6^x&$1m=$i#2pfq-6#iv_xtcizptek5^_n7ep(8$w&5p'
+SECRET_KEY = config('SECRET_KEY', cast=str)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-IS_DOCKER = False
+IS_DOCKER = config('IS_DOCKER', default=False, cast=bool)
 
 DEFAULT_DATA_DIR = "/data" if IS_DOCKER else "./.data"
 
@@ -24,7 +24,7 @@ DATA_DIR = os.getenv("DATA_DIR", DEFAULT_DATA_DIR)
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 
 # Application definition
@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.flatpages',
+    'django.contrib.sites',
+    'mathfilters',
 
     # design
     'django_bootstrap5',
@@ -47,9 +50,14 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.openid_connect',
 
+    # api
+    'rest_framework',
+    'rest_framework_api_key',
+
     # vt
     'vt_products',
-    'vt_public_web'
+    'vt_public_web',
+    'vt_api'
 ]
 
 MIDDLEWARE = [
@@ -60,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 
     # allauth
     'allauth.account.middleware.AccountMiddleware',
@@ -70,7 +79,21 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+SOCIALACCOUNT_ONLY = config('SOCIALACCOUNT_ONLY', default=False, cast=bool)
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework_api_key.permissions.HasAPIKey",
+    ]
+}
+
+
+LOGIN_REDIRECT_URL = "/dashboard"
+
 ROOT_URLCONF = 'vt_conf.urls'
+
+SITE_ID = 1
 
 TEMPLATES = [
     {
@@ -126,7 +149,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'de-de'
 
-TIME_ZONE = 'Europe/Berlin'
+TIME_ZONE = config('TIME_ZONE', default='Europe/Berlin')
 
 USE_I18N = True
 

@@ -21,12 +21,13 @@
         <div>
             {% include 'header.html' %}
 
-            {% block content %}
-            {% endblock %}
+            <div class="container py-3">
+                {% block content %}
+                {% endblock %}
 
-            {% block extra_body %}
-            {% endblock %}
-
+                {% block extra_body %}
+                {% endblock %}
+            </div>
         </div>
 
         {% include 'footer.html' %}

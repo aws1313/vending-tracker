@@ -3,24 +3,53 @@
 <header class="mb-auto">
     <div>
         <nav class="nav nav-masthead justify-content-center float-md-end">
-            {% if user.is_authenticated %}
-                <a class="nav-link{% if request.path == '/accounts/email/'%} active{% endif %}" href="{% url 'account_email' %}">{% user_display user %}</a>
-                <a class="nav-link{% if request.path == '/accounts/password/change/'%} active{% endif %}" href="{% url 'account_change_password' %}">{% trans "Change Password" %}</a>
-                <a class="nav-link{% if request.path == '/accounts/logout/'%} active{% endif %}" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
-            {% else %}
-                <a class="nav-link {% if request.path == '/accounts/login/'%} active{% endif %}" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
-                <a class="nav-link {% if request.path == '/accounts/signup/'%} active{% endif %}" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
-            {% endif %}
-
         </nav>
     </div>
 </header>
-<nav class="navbar navbar-expand-sm navbar-dark sticky-top" id="nav">
+<nav class="navbar navbar-expand-sm navbar-dark sticky-top" id="nav" style="background-color: rgb(9, 15, 27);">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">
             <span class="align-middle">
                 AUTOMAT
             </span>
         </a>
+
+        <!-- navbar for mobile navigation-->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavBar" aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+        <div class="collapse navbar-collapse align-middle" id="mainNavBar">
+            <ul class="navbar-nav me-auto sm-2 mb-sm-0">
+                {% if user.is_authenticated %}
+                    {% url 'vt_products_dashboard' as url_dashboard %}
+                    {% url 'vt_products_machines' as url_machines %}
+                    {% url 'vt_products_products' as url_product %}
+                    <li class="nav-item "><a class="nav-link align-middle {% if request.get_full_path == url_dashboard %}active{% endif %}"  href="{% url 'vt_products_dashboard' %}">DASHBOARD</a></li>
+                    <li class="nav-item "><a class="nav-link align-middle {% if request.get_full_path == url_machines %}active{% endif %}"  href="{% url 'vt_products_machines' %}">AUTOMATEN</a></li>
+                    <li class="nav-item "><a class="nav-link align-middle {% if request.get_full_path == url_product %}active{% endif %}"  href="{% url 'vt_products_products' %}">PRODUKTE</a></li>
+                {% else %}
+                    {%  url 'vt_public_web_feedback' as url_feedback %}
+                    <li class="nav-item "><a class="nav-link align-middle {% if request.get_full_path == url_feedback %}active{% endif %}" href="{% url 'vt_public_web_feedback' %}">FEEDBACK</a></li>
+                {% endif %}
+            </ul>
+            <div class="d-sm-flex col-sm-3 justify-content-sm-end">
+                {% if user.is_authenticated %}
+                    {%  if not request.path == '/accounts/email/' %}
+                      <button class="btn btn-primary ms-3" onclick="window.location.href='{% url 'account_email' %}'">{% user_display user %}</button>
+                    {% endif %}
+
+                    {%  if not request.path == '/accounts/logout/' %}
+                        <button class="btn btn-primary ms-3" onclick="window.location.href='{% url 'account_logout' %}'">LOGOUT</button>
+                    {% endif %}
+                {% else %}
+                    {%  if not request.path == '/accounts/login/' %}
+                        <button class="btn btn-primary ms-3" onclick="window.location.href='{% url 'account_login' %}'">LOGIN</button>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
     </div>
 </nav>

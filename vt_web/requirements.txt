@@ -1,4 +1,4 @@
-django
+django~=5.2
 django-configurations
 gunicorn
 pillow
@@ -6,3 +6,10 @@ django-allauth[socialaccount,openid_connect]
 requests
 jwt
 django-bootstrap5
+
+djangorestframework
+djangorestframework-api-key~=3.1.0
+django-mathfilters
+
+django-simple-captcha
+python-decouple

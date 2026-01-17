@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+    <div>
+        <h3>Einkäufe</h3>
+        {% for p in purchases %}
+            {{ p.datetime }}
+        {% endfor %}
+    </div>
+
+
+{% endblock %}
