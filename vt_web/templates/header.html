@@ -36,10 +36,6 @@
             </ul>
             <div class="d-sm-flex col-sm-3 justify-content-sm-end">
                 {% if user.is_authenticated %}
-                    {%  if not request.path == '/accounts/email/' %}
-                      <button class="btn btn-primary ms-3" onclick="window.location.href='{% url 'account_email' %}'">{% user_display user %}</button>
-                    {% endif %}
-
                     {%  if not request.path == '/accounts/logout/' %}
                         <button class="btn btn-primary ms-3" onclick="window.location.href='{% url 'account_logout' %}'">LOGOUT</button>
                     {% endif %}
