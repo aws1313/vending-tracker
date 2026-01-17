@@ -183,3 +183,36 @@ BOOTSTRAP5 = {
     "javascript_url": "/static/bootstrap.bundle.min.js",
     "css_url": "/static/bootstrap.min.css",
 }
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console",],
+        "level": "INFO",
+    },
+    "loggers": {
+        "celery": {
+            "handlers": ["console",],
+            "level": "WARNING",
+            "propagate": True,
+        }
+    },
+    "formatters": {
+        "verbose": {
+            "format": "{name} {levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+        "standard": {"format": "[%(levelname)s] %(asctime)s %(name)s: %(message)s"},
+    },
+}
