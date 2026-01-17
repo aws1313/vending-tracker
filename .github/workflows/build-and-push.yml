@@ -10,7 +10,12 @@ on:
       - '**/*.py'
       - 'requirements.txt'
       - '.github/workflows/docker-build-and-push.yml' # Pfad korrigiert
-
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Grund für den manuellen Build'
+        required: false
+        default: 'Manueller Refresh'
 jobs:
   build-and-push:
     runs-on: ubuntu-latest # Nutze immer die aktuellste stable Version
@@ -35,7 +40,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./vt_web/
+          file: ./vt_web/Dockerfile
           push: true
           # GHCR-Pfad: ghcr.io/OWNER/IMAGE_NAME
           tags: |
