@@ -12,4 +12,4 @@ python manage.py collectstatic --noinput
 
 # Start the Django server
 echo "Starting Django server..."
-gunicorn --bind 0.0.0.0:8000 --workers 3 --threads 2 aesmtk_app_server.wsgi:application
+gunicorn --bind 0.0.0.0:8000 --workers 2 --threads 2 vt_conf.wsgi:application

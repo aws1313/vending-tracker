@@ -1,3 +1,4 @@
+from email.policy import default
 from pathlib import Path
 import os
 
@@ -20,7 +21,7 @@ IS_DOCKER = config('IS_DOCKER', default=False, cast=bool)
 
 DEFAULT_DATA_DIR = "/data" if IS_DOCKER else "./.data"
 
-DATA_DIR = os.getenv("DATA_DIR", DEFAULT_DATA_DIR)
+DATA_DIR = config("DATA_DIR", default=DEFAULT_DATA_DIR)
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
