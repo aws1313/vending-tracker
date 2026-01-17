@@ -40,7 +40,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./vt_web/
+          file: ./vt_web/Dockerfile
           push: true
           # GHCR-Pfad: ghcr.io/OWNER/IMAGE_NAME
           tags: |
