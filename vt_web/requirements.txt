@@ -13,3 +13,7 @@ django-mathfilters
 
 django-simple-captcha
 python-decouple
+
+django-allauth-ui
+django-widget-tweaks
+slippers

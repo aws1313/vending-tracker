@@ -45,8 +45,17 @@ INSTALLED_APPS = [
 
     # design
     'django_bootstrap5',
+    'widget_tweaks',
+    'slippers',
 
+
+
+    # vt
+    'vt_products',
+    'vt_public_web',
+    'vt_api',
     # auth
+    'allauth_ui',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -55,11 +64,6 @@ INSTALLED_APPS = [
     # api
     'rest_framework',
     'rest_framework_api_key',
-
-    # vt
-    'vt_products',
-    'vt_public_web',
-    'vt_api'
 ]
 
 MIDDLEWARE = [
@@ -83,6 +87,7 @@ AUTHENTICATION_BACKENDS = [
 
 SOCIALACCOUNT_ONLY = config('SOCIALACCOUNT_ONLY', default=False, cast=bool)
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+ALLAUTH_UI_THEME = "dark"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
