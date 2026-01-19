@@ -1,0 +1,21 @@
+<script>
+    $(document).ready(function() {
+        // When the modal is about to be shown...
+        $('#editForm').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var url = button.data('url'); // Extract URL from data-* attribute
+
+            var modal = $(this);
+            var modalBody = modal.find('.modal-body');
+
+            var form = modal.find('#modalForm');
+            if (form.length) {
+                form.attr('action', url);
+            }
+
+            // Load the content from the Django view into the modal body
+            modalBody.html('<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+            modalBody.load(url);
+        });
+    });
+</script>
