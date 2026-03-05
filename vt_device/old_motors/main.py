@@ -1,4 +1,6 @@
 import json
+import time
+
 import requests
 from threading import Thread, Lock, Event
 from queue import Queue, Empty
@@ -7,18 +9,31 @@ import board
 import adafruit_tca9548a
 from adafruit_ina219 import INA219
 
+CURRENT_THRESHOLD = 50
+
 class BackgroundCheck(Thread):
     def __init__(self, queue, rows, columns):
         Thread.__init__(self)
         self.daemon = True
         self.queue = queue
-        self.rows = rows
-        self.columns = columns
+        self.rows: list[INA219] = rows
+        self.columns: list[INA219] = columns
+
+
 
     def run(self):
-        pass
+        for idr, r in enumerate(self.rows):
+            cur = r.current
+            if (CURRENT_THRESHOLD < cur) or ( cur < -CURRENT_THRESHOLD):
+                print(f"current in row: {idr}:{cur}")
 
+                # wenn ein Strom in einer Reihe fließt, suchen wir die äquivalente Spalte
 
+                for idc, c in enumerate(self.columns):
+                    curc = c.current
+                    if (CURRENT_THRESHOLD < curc) or (curc < -CURRENT_THRESHOLD):
+                        print(f"current in column: {idr}:{curc}")
+                        self.queue.put((idr, idc))
 
 class VTDevice:
     def __init__(self, conf:str = "config.json"):
@@ -35,7 +50,7 @@ class VTDevice:
 
         self.sold_queue = Queue()
 
-        self.background_check = BackgroundCheck()
+        self.background_check = BackgroundCheck(self.sold_queue, self.rows, self.columns)
 
 
     def init_sensors(self):
@@ -44,10 +59,17 @@ class VTDevice:
 
         i:str
         for i in self.conf["rows"]:
+            s, t = i.split(":")
+            if f"{s}:{int(f"0x{t}",16)}" not in self.available_addresses:
+                print(f"error {i} not available")
+                continue
             ch, a = i.split(":")
             r.append(INA219(i2c_bus=self.tca[int(ch)], addr=int(f"0x{a}",16)))
 
         for i in self.conf["columns"]:
+            if i not in self.available_addresses:
+                print(f"error {i} not available")
+                continue
             ch, a = i.split(":")
             c.append(INA219(i2c_bus=self.tca[int(ch)], addr=int(f"0x{a}",16)))
 
@@ -82,4 +104,14 @@ class VTDevice:
                 self.sold_queue.task_done()
 
 if __name__ == '__main__':
-    VTDevice().run()
+    vt = VTDevice()
+    print(vt.available_addresses)
+    print(vt.rows)
+    print(vt.columns)
+
+    while True:
+        print(vt.rows[0].current)
+
+        time.sleep(0.1)
+
+    #vt.run()
