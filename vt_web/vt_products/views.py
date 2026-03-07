@@ -99,7 +99,7 @@ def manage_categories(request):
 def manage_packaging_types(request):
     category_form_set = forms.modelformset_factory(ProductPackagingType, fields=["name"], can_delete=True, can_delete_extra=False, extra=5)
     if request.method == "POST":
-        formset = category_form_set(request.POST, queryset=ProductCategory.objects.all())
+        formset = category_form_set(request.POST, queryset=ProductPackagingType.objects.all())
         if formset.is_valid():
             formset.save()
         messages.success(request, f"Packaging types successfully updated")

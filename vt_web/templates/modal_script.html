@@ -17,5 +17,9 @@
             modalBody.html('<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
             modalBody.load(url);
         });
+
+        $('#editForm').on('hidden.bs.modal', function () {
+            $(this).find('.modal-body').html('');
+        });
     });
 </script>
