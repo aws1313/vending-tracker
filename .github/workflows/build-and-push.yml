@@ -8,6 +8,7 @@ on:
       - 'Dockerfile'
       - 'docker-compose.yml'
       - '**/*.py'
+      - '**/*.html'
       - 'requirements.txt'
       - '.github/workflows/docker-build-and-push.yml' # Pfad korrigiert
   workflow_dispatch:
