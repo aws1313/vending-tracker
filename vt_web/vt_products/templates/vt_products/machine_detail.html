@@ -27,8 +27,8 @@
                                 {% else %}
                                     kp
                                 {% endif %}
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url = "{% url 'update_machine_field' f.pk %}">
-                                    bearbeiten
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editForm" data-url = "{% url 'update_machine_field' f.pk %}">
+                                    <i class="bi bi-pencil-square"></i>
                                 </button>
 
                             </td>

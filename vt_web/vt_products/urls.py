@@ -2,7 +2,7 @@ from django.urls import path
 
 from vt_products.views import MachineList, add_machine, MachineDetail, add_machine_row, add_machine_field, \
     ProductListView, ProductCreateView, ProductUpdateView, renew_api_key, MachineFieldUpdate, DashboardView, \
-    manage_categories
+    manage_categories, manage_packaging_types
 
 urlpatterns = [
     # DASHBOARD
@@ -12,6 +12,7 @@ urlpatterns = [
     path("products/add", ProductCreateView.as_view(), name="add_product"),
     path("products/update/<int:pk>", ProductUpdateView.as_view(), name="update_product"),
     path("product_categories/bulkupdate", manage_categories, name="manage_product_categories"),
+    path("product_packaging_types/bulkupdate", manage_packaging_types, name="manage_product_packaging_types"),
 
 
     # MACHINES

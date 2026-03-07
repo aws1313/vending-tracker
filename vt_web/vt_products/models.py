@@ -1,4 +1,6 @@
 from django.db import models
+from imagekit.models import ImageSpecField
+from pilkit.processors import ResizeToFit
 from rest_framework_api_key.models import APIKey
 from datetime import datetime
 
@@ -8,13 +10,28 @@ class ProductCategory(models.Model):
     def __str__(self):
         return self.name
 
+class ProductPackagingType(models.Model):
+    name = models.CharField(max_length=255)
+    def __str__(self):
+        return self.name
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
-    category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
-    preview_image = models.ImageField(null=True, blank=True)
+    category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    packaging_type = models.ForeignKey(ProductPackagingType, on_delete=models.SET_NULL, blank=True, null=True)
     vend_price = models.DecimalField(max_digits=10, decimal_places=2)
     ean = models.CharField(max_length=255, default="")
+
+    preview_image = models.ImageField(null=True, blank=True)
+    preview_image_icon = ImageSpecField(source="preview_image",
+                                        processors=[ResizeToFit(128, None)],
+                                        format='JPEG',
+                                        options={'quality': 60}
+                                        )
+    preview_image_medium = ImageSpecField(source="preview_image",
+                                          processors=[ResizeToFit(480, None)],
+                                          format='JPEG',
+                                          options={'quality': 60})
 
     def __str__(self):
         return self.name
@@ -35,14 +52,14 @@ class Batch(models.Model):
 
 class Machine(models.Model):
     friendly_name = models.CharField(max_length=255)
-    apikey = models.ForeignKey(APIKey, on_delete=models.CASCADE, null=True, blank=True)
+    apikey = models.ForeignKey(APIKey, on_delete=models.SET_NULL, null=True, blank=True)
 
 class MachineRow(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
     chilled = models.BooleanField()
 
 class MachineField(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     max_capacity = models.IntegerField()
     in_stock = models.IntegerField()
     row = models.ForeignKey(MachineRow, on_delete=models.CASCADE)

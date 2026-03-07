@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'django.contrib.sites',
     'mathfilters',
+    'django_filters',
 
     # design
     'django_bootstrap5',

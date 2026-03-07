@@ -11,11 +11,14 @@ from django.views.generic.list import ListView
 from django.shortcuts import render
 from django import forms
 from django.urls import reverse
+from django_filters.views import FilterView
 from rest_framework_api_key.models import APIKey
 
-from vt_products.models import Machine, MachineRow, MachineField, Product, ProductCategory, Purchase
+from vt_products.models import Machine, MachineRow, MachineField, Product, ProductCategory, Purchase, \
+    ProductPackagingType
 
 from .plots import wochen_umsatz_plot
+from .filters import ProductFilter
 
 
 ####
@@ -36,8 +39,12 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 ####
 # PRODUCTS
 ####
-class ProductListView(LoginRequiredMixin, ListView):
+class ProductListView(LoginRequiredMixin, FilterView):
     model = Product
+    template_name = "vt_products/product_list.html"
+    filterset_class = ProductFilter
+    context_object_name = "object_list"
+
     #def get_context_data(self, **kwargs):
     #    context = super(ProductListView, self).get_context_data(**kwargs)
     #    context["form"] = ProductForm()
@@ -60,7 +67,7 @@ class ProductUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     fields = "__all__"
     success_url = "/dashboard/products"
     success_message = "Product successfully updated"
-
+"""
 class ProductCategoryCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = ProductCategory
     fields = "__all__"
@@ -71,7 +78,7 @@ class ProductCategoryUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateV
     model = ProductCategory
     fields = "__all__"
     success_url = "/dashboard/products"
-    success_message = "Product category successfully updated"
+    success_message = "Product category successfully updated" """
 
 @login_required()
 def manage_categories(request):
@@ -88,6 +95,20 @@ def manage_categories(request):
 
     return render(request, "vt_products/manage_product_categories.html", {"formset": formset})
 
+@login_required()
+def manage_packaging_types(request):
+    category_form_set = forms.modelformset_factory(ProductPackagingType, fields=["name"], can_delete=True, can_delete_extra=False, extra=5)
+    if request.method == "POST":
+        formset = category_form_set(request.POST, queryset=ProductCategory.objects.all())
+        if formset.is_valid():
+            formset.save()
+        messages.success(request, f"Packaging types successfully updated")
+        return HttpResponseRedirect("/dashboard/products")
+
+    else:
+        formset = category_form_set(queryset=ProductPackagingType.objects.all())
+
+    return render(request, "vt_products/manage_product_packaging_types.html", {"formset": formset})
 
 
 # Purchase

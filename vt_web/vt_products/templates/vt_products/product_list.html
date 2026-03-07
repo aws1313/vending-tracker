@@ -3,13 +3,50 @@
 
 {% block content %}
    <div>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "add_product" %}">
-        Produkt hinzufügen
-    </button>{% include 'modal_template.html' with title="Produkt hinzufügen" id="ProductAdd"%}
+   <div class="d-flex flex-wrap align-items-end gap-2">
+       <div class="btn-group btn-group-sm">
 
-   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "manage_product_categories" %}">
-       Kategorie bearbeiten
-   </button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "add_product" %}">
+                Produkt <i class="bi bi-plus"></i>
+            </button>{% include 'modal_template.html' with title="Produkt hinzufügen" id="ProductAdd"%}
+
+           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "manage_product_categories" %}">
+               Kategorie <i class="bi bi-pencil-square"></i>
+           </button>
+
+           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "manage_product_packaging_types" %}">
+               Packungstypen <i class="bi bi-pencil-square"></i>
+           </button>
+       </div>
+
+       <form method="get" id="filter-form" class="d-inline-flex align-items-end gap-2 ms-auto">
+           <button type="button" class="btn btn-primary btn-sm" onclick="startScanner()" title="Barcode scannen">
+                <i class="bi bi-upc-scan"></i>
+            </button>
+
+           <div style="min-width: 180px;">
+               {% bootstrap_field filter.form.search layout='vertical' label_class='visually-hidden' wrapper_class='mb-0' field_class='form-select-sm' %}
+           </div>
+            <div style="min-width: 180px;">
+                {% bootstrap_field filter.form.category layout='vertical' label_class='visually-hidden' wrapper_class='mb-0' field_class='form-select-sm' %}
+            </div>
+
+
+            <button type="submit" class="btn btn-primary btn-sm d-md-none">Filtern</button>
+            <a href="." class="btn btn-outline-secondary btn-sm col-auto">Reset</a>
+       </form>
+
+       <div id="reader-container" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; padding: 20px;">
+            <div class="card mx-auto" style="max-width: 500px;">
+                <div class="card-header d-flex justify-content-between">
+                    <span>Barcode scannen</span>
+                    <button class="btn-close" onclick="stopScanner()"></button>
+                </div>
+            <div id="interactive" style="width: 100%;"></div>
+        </div>
+</div>
+
+   </div>
 
 
    <div class="album py-4">
@@ -17,7 +54,7 @@
            {% for p in object_list %}
                <div class="col-12 align-items-stretch">
                 <div class="card shadow-sm pp-card">
-                    <img src="{% if p.preview_image %}{{ p.preview_image.url }}{% else %}{% endif %}" class="card-img-top" style="width:auto; max-height:30vh" alt="">
+                    <img src="{% if p.preview_image %}{{ p.preview_image_medium.url }}{% else %}{% endif %}" class="card-img-top" style="width:auto; max-height:30vh" alt="">
                     <div class="card-body">
                         <h5 class="card-title">{{ p.name }}</h5>
                         <p class="card-text">
@@ -25,8 +62,8 @@
                         </p>
                     </div>
                     <div class="card-footer">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "update_product" p.pk %}">
-                            Produkt updaten
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "update_product" p.pk %}">
+                            <i class="bi bi-pencil-square"></i>
                         </button>
                     </div>
 
@@ -40,4 +77,57 @@
 
    </div>
     {% include 'modal_script.html' %}
+
+    <script>
+        const selectField = document.querySelector("#filter-form select");
+        if (selectField){
+            selectField.addEventListener("change", function(){
+                this.form.submit();
+            })
+        }
+    </script>
+    <script>
+        let html5QrCode;
+
+        function startScanner() {
+            // Container anzeigen
+            document.getElementById('reader-container').style.display = 'block';
+
+            html5QrCode = new Html5Qrcode("interactive");
+
+            const config = { fps: 10, qrbox: { width: 250, height: 150 } };
+
+            // Kamera starten (Rückkamera bevorzugt)
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config,
+                (decodedText) => {
+                    // Erfolg: Wert ins Suchfeld eintragen
+                    const searchInput = document.querySelector('#filter-form input[name="search"]');
+                    if (searchInput) {
+                        searchInput.value = decodedText;
+                        // Scanner stoppen und Formular abschicken
+                        stopScanner();
+                        document.getElementById('filter-form').submit();
+                    }
+                },
+                (errorMessage) => {
+                    // Optional: Fehler beim Scannen ignorieren (passiert ständig während der Suche)
+                }
+            ).catch((err) => {
+                console.error("Kamera-Fehler:", err);
+                alert("Kamera konnte nicht gestartet werden.");
+            });
+        }
+
+        function stopScanner() {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    document.getElementById('reader-container').style.display = 'none';
+                });
+            } else {
+                document.getElementById('reader-container').style.display = 'none';
+            }
+        }
+    </script>
 {% endblock %}

@@ -2,6 +2,8 @@ django~=6.0
 django-configurations
 gunicorn
 pillow
+django-imagekit
+django-filter
 django-allauth[socialaccount,openid_connect]
 requests
 PyJWT
