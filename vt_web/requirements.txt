@@ -6,6 +6,8 @@ django-allauth[socialaccount,openid_connect]
 requests
 PyJWT
 django-bootstrap5
+plotly[express]
+pandas
 
 djangorestframework
 djangorestframework-api-key~=3.1.0

@@ -23,6 +23,7 @@ class Purchase(models.Model):
     completed = models.BooleanField(default=False)
 
 
+
 class Batch(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price_per_piece = models.DecimalField(max_digits=10, decimal_places=2) # paid price

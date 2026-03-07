@@ -5,8 +5,12 @@
    <div>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "add_product" %}">
         Produkt hinzufügen
-    </button>
-    {% include 'modal_template.html' with title="Produkt hinzufügen" %}
+    </button>{% include 'modal_template.html' with title="Produkt hinzufügen" id="ProductAdd"%}
+
+   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editForm" data-url="{% url "manage_product_categories" %}">
+       Kategorie bearbeiten
+   </button>
+
 
    <div class="album py-4">
        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3">

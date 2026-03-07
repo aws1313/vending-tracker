@@ -1,6 +1,6 @@
 """
 script to test if the RS232 controller is working at all.
-for testing: short tx and rx of the RS232 controller and run the script
+for testing: short/connect tx and rx of the RS232 controller and run the script
 """
 
 import serial
