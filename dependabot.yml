@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/vt_device"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/vt_web"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/vt_web"
+    schedule:
+      interval: "weekly"
