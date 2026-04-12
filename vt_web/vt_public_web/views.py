@@ -5,6 +5,3 @@ def index(request):
 
 def feedback(request):
     return render(request, 'vt_public_web/feedback.html')
-
-def impressum(request):
-    return render(request, "vt_public_web/impressum.html")
