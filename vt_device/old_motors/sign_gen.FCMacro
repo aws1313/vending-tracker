@@ -1,0 +1,68 @@
+import FreeCAD as App
+import Mesh
+import MeshPart
+import Part
+
+export_path = "/home/aws1313/Downloads/schilder.3mf"
+doc = App.ActiveDocument
+
+sheet = doc.getObjectsByLabel("Daten")[0]
+
+print(sheet)
+
+export_objects = []
+
+plan_to_gen = {i:1 for i in range(100,107,2)}
+plan_to_gen.update({i:1 for i in range(110,117,2)})
+plan_to_gen.update({i:1 for i in range(130,137,2)})
+plan_to_gen.update({i:1 for i in range(140,147,2)})
+plan_to_gen.update({i:1 for i in range(150,157,2)})
+plan_to_gen.update({i:2 for i in range(120,128)})
+
+offset_x = 0
+offset_y = 0
+spalten = 5
+abstand = 50 # mm
+
+print("Starte Generierung...")
+
+try:
+    for i, (nr, var) in enumerate(plan_to_gen.items()):
+        # 1. Parameter im Spreadsheet setzen
+        sheet.set("ID_Nummer", str(nr))
+        sheet.set("Variante", str(var))
+        doc.recompute()
+        
+        # 2. Den richtigen Body auswählen
+        source_obj = doc.getObjectsByLabel("Schild_gross")[0] if var == 1 else doc.getObjectsByLabel("Schild_klein")[0]
+        
+        # 3. Einen statischen Snapshot erzeugen (Mesh)
+        # Wir erzeugen eine Kopie der Geometrie, damit sie sich nicht mehr ändert
+        
+        mesh_data = MeshPart.meshFromShape(
+            source_obj.Shape, 
+            0.1 # Abweichung (Surface deviation)           # Segmente optimieren
+        )
+        
+        temp_mesh_obj = doc.addObject("Mesh::Feature", f"Schild_{nr}")
+        temp_mesh_obj.Mesh = mesh_data
+        
+        # 4. Optional: Schilder im Raster anordnen
+        col = i % spalten
+        row = i // spalten
+        temp_mesh_obj.Placement.Base = App.Vector(col * abstand, row * abstand, 0)
+        
+        export_objects.append(temp_mesh_obj)
+        print(f"Objekt {nr} (Variante {var}) vorbereitet.")
+
+    # 5. Alle gesammelten Objekte als eine 3MF exportieren
+    Mesh.export(export_objects, export_path)
+    print(f"ERFOLG: Alle Schilder wurden in {export_path} gespeichert.")
+
+finally:
+    # 6. Aufräumen: Die temporären Mesh-Objekte aus dem FreeCAD-Dokument löschen
+    # (Damit deine Datei nicht riesig wird)
+    for obj in export_objects:
+        doc.removeObject(obj.Name)
+    doc.recompute()
+    
